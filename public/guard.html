@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🦊 Fox Eye Guard</title>
-    <meta name="theme-color" content="#1a237e">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🦊</text></svg>">
+    <title>🦊 Fox Eye Security - Guard App</title>
     <style>
         * {
             margin: 0;
@@ -16,28 +13,42 @@
         }
         
         body {
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 20px;
-            padding-bottom: 100px;
         }
         
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
+        .hidden {
+            display: none !important;
         }
         
-        header {
+        /* Login Screen */
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .login-header {
             background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
             color: white;
-            padding: 25px 20px;
-            border-radius: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 30px rgba(26, 35, 126, 0.3);
+            padding: 30px;
             text-align: center;
         }
         
-        h1 {
+        .login-header h1 {
             font-size: 24px;
             margin-bottom: 10px;
             display: flex;
@@ -46,21 +57,143 @@
             gap: 10px;
         }
         
+        .login-header p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .login-form {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #1a237e;
+            box-shadow: 0 0 0 3px rgba(26, 35, 126, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(26, 35, 126, 0.2);
+        }
+        
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        
+        .error-message {
+            background: #fee;
+            color: #c33;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .instructions {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+        }
+        
+        .instructions a {
+            color: #1a237e;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        /* Main App */
+        .app-container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .app-header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            color: white;
+            padding: 25px;
+        }
+        
+        .guard-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .guard-details h2 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        
+        .guard-details .role {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
         .guard-id {
             background: rgba(255,255,255,0.2);
-            padding: 5px 15px;
+            padding: 8px 15px;
             border-radius: 20px;
             font-size: 14px;
-            margin-top: 5px;
-            display: inline-block;
+            font-weight: 600;
+        }
+        
+        .app-content {
+            padding: 25px;
         }
         
         .status-card {
-            background: white;
+            background: #f8f9fa;
             border-radius: 15px;
             padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
         }
         
         .status-item {
@@ -110,11 +243,10 @@
         }
         
         .location-section {
-            background: white;
+            background: #f8f9fa;
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .gps-status {
@@ -140,11 +272,12 @@
         
         .coordinates {
             font-family: 'Courier New', monospace;
-            background: #f8f9fa;
+            background: white;
             padding: 15px;
             border-radius: 10px;
             margin: 15px 0;
             font-size: 14px;
+            border: 1px solid #eee;
         }
         
         .update-button {
@@ -158,6 +291,12 @@
             font-weight: 600;
             cursor: pointer;
             margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .update-button:hover {
+            background: #283593;
+            transform: translateY(-2px);
         }
         
         .last-update {
@@ -167,59 +306,79 @@
             margin-top: 10px;
         }
         
-        .nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
+        .logout-btn {
+            background: #f8f9fa;
+            color: #666;
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-size: 14px;
+            cursor: pointer;
             display: flex;
-            justify-content: space-around;
-            padding: 15px 0;
-            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
-        }
-        
-        .nav-item {
-            display: flex;
-            flex-direction: column;
             align-items: center;
-            color: #666;
-            text-decoration: none;
-            font-size: 12px;
+            gap: 8px;
+            margin: 20px auto;
         }
         
-        .nav-item.active {
-            color: #1a237e;
-        }
-        
-        .nav-icon {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        #loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
+        .logout-btn:hover {
+            background: #e9ecef;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-header">
             <h1>🦊 Fox Eye Security</h1>
-            <div class="guard-id">Guard ID: <span id="guardId">Loading...</span></div>
-        </header>
+            <p>Guard Tracking System</p>
+        </div>
         
-        <div id="loading">Loading guard information...</div>
+        <div class="login-form">
+            <div class="form-group">
+                <label for="guardId">Guard ID</label>
+                <input type="text" id="guardId" class="form-input" 
+                       placeholder="e.g., EMP001" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="pin">Security PIN</label>
+                <input type="password" id="pin" class="form-input" 
+                       placeholder="4-digit PIN" maxlength="4" required>
+            </div>
+            
+            <button id="loginBtn" class="login-btn">
+                <span>🔐 Login to Dashboard</span>
+            </button>
+            
+            <div id="loginError" class="error-message">
+                ❌ Invalid Guard ID or PIN. Please try again.
+            </div>
+            
+            <div class="instructions">
+                <p>Use your assigned Guard ID and 4-digit PIN</p>
+                <p>Contact supervisor if you don't have credentials</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main App (Hidden until login) -->
+    <div id="appScreen" class="app-container hidden">
+        <div class="app-header">
+            <div class="guard-info">
+                <div class="guard-details">
+                    <h2 id="guardNameDisplay">-</h2>
+                    <div class="role" id="guardRoleDisplay">-</div>
+                </div>
+                <div class="guard-id" id="guardIdDisplay">EMP-</div>
+            </div>
+            <div style="font-size: 14px; opacity: 0.8;">
+                🟢 Live Tracking Active
+            </div>
+        </div>
         
-        <div id="app" class="hidden">
+        <div class="app-content">
             <div class="status-card">
-                <h2 style="color: #1a237e; margin-bottom: 20px;">📍 Current Status</h2>
+                <h3 style="color: #1a237e; margin-bottom: 20px;">📍 Current Status</h3>
                 
                 <div class="status-item">
                     <span class="status-label">Guard Name</span>
@@ -227,8 +386,8 @@
                 </div>
                 
                 <div class="status-item">
-                    <span class="status-label">Site/Post</span>
-                    <span class="status-value" id="guardSite">-</span>
+                    <span class="status-label">Role</span>
+                    <span class="status-value" id="guardRole">-</span>
                 </div>
                 
                 <div class="status-item">
@@ -245,7 +404,7 @@
                 </div>
                 
                 <div class="status-item">
-                    <span class="status-label">Connection</span>
+                    <span class="status-label">Status</span>
                     <span class="status-value" id="connectionStatus">🟢 Online</span>
                 </div>
             </div>
@@ -274,126 +433,187 @@
                     Auto-update every 30 seconds
                 </div>
             </div>
+            
+            <button class="logout-btn" onclick="logout()">
+                <span>🚪 Logout</span>
+            </button>
         </div>
-    </div>
-    
-    <div class="nav-bar">
-        <a href="#" class="nav-item active">
-            <span class="nav-icon">📍</span>
-            <span>Tracking</span>
-        </a>
-        <a href="#" class="nav-item">
-            <span class="nav-icon">📋</span>
-            <span>Duty</span>
-        </a>
-        <a href="#" class="nav-item">
-            <span class="nav-icon">👮</span>
-            <span>Profile</span>
-        </a>
-        <a href="#" class="nav-item">
-            <span class="nav-icon">⚙️</span>
-            <span>Settings</span>
-        </a>
     </div>
 
     <script>
         // Configuration
         const SERVER_URL = 'https://tracker2-6w8m.onrender.com';
-        const GUARD_ID = 'guard001'; // This should come from login
         const UPDATE_INTERVAL = 30000; // 30 seconds
         
+        // Current guard info
+        let currentGuard = {
+            id: null,
+            name: null,
+            role: null
+        };
+        
+        let locationUpdateInterval;
+        
         // DOM Elements
-        const app = document.getElementById('app');
-        const loading = document.getElementById('loading');
-        const sosBtn = document.getElementById('sosBtn');
-        const updateBtn = document.getElementById('updateLocationBtn');
+        const loginScreen = document.getElementById('loginScreen');
+        const appScreen = document.getElementById('appScreen');
+        const loginBtn = document.getElementById('loginBtn');
+        const guardIdInput = document.getElementById('guardId');
+        const pinInput = document.getElementById('pin');
+        const loginError = document.getElementById('loginError');
         
-        // Guard info elements
-        const guardIdEl = document.getElementById('guardId');
+        // App elements
+        const guardNameDisplay = document.getElementById('guardNameDisplay');
+        const guardRoleDisplay = document.getElementById('guardRoleDisplay');
+        const guardIdDisplay = document.getElementById('guardIdDisplay');
         const guardNameEl = document.getElementById('guardName');
-        const guardSiteEl = document.getElementById('guardSite');
-        const batteryLevelEl = document.getElementById('batteryLevel');
-        const batteryIconEl = document.getElementById('batteryIcon');
-        const gpsAccuracyEl = document.getElementById('gpsAccuracy');
-        const latitudeEl = document.getElementById('latitude');
-        const longitudeEl = document.getElementById('longitude');
-        const lastUpdateTimeEl = document.getElementById('lastUpdateTime');
+        const guardRoleEl = document.getElementById('guardRole');
         
-        let currentLocation = null;
-        let updateInterval;
+        // Check if already logged in
+        function checkExistingLogin() {
+            const savedGuard = localStorage.getItem('foxeye_guard');
+            if (savedGuard) {
+                try {
+                    const guard = JSON.parse(savedGuard);
+                    if (guard.id && guard.name && guard.role) {
+                        currentGuard = guard;
+                        showApp();
+                        return true;
+                    }
+                } catch (e) {
+                    // Invalid saved data
+                }
+            }
+            return false;
+        }
         
-        // Initialize
-        async function init() {
-            guardIdEl.textContent = GUARD_ID;
+        // Handle login
+        async function handleLogin() {
+            const guardId = guardIdInput.value.trim().toUpperCase();
+            const pin = pinInput.value.trim();
             
-            // Load guard profile
-            await loadGuardProfile();
+            if (!guardId || !pin) {
+                showError('Please enter Guard ID and PIN');
+                return;
+            }
+            
+            if (pin.length !== 4) {
+                showError('PIN must be 4 digits');
+                return;
+            }
+            
+            // Show loading
+            loginBtn.innerHTML = '<span>🔐 Authenticating...</span>';
+            loginBtn.disabled = true;
+            
+            try {
+                const response = await fetch(`${SERVER_URL}/api/guard-login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ guardId, pin })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Save guard info
+                    currentGuard = {
+                        id: data.guardId,
+                        name: data.name,
+                        role: data.role,
+                        status: data.status
+                    };
+                    
+                    // Save to localStorage
+                    localStorage.setItem('foxeye_guard', JSON.stringify(currentGuard));
+                    
+                    // Show app
+                    showApp();
+                    showNotification(`Welcome ${data.name}!`);
+                    
+                } else {
+                    showError(data.error || 'Invalid credentials');
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                showError('Network error. Please try again.');
+            } finally {
+                // Reset button
+                loginBtn.innerHTML = '<span>🔐 Login to Dashboard</span>';
+                loginBtn.disabled = false;
+            }
+        }
+        
+        // Show error message
+        function showError(message) {
+            loginError.textContent = `❌ ${message}`;
+            loginError.style.display = 'block';
+            setTimeout(() => {
+                loginError.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #1a237e;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+        
+        // Show the main app
+        function showApp() {
+            // Update display with guard info
+            guardNameDisplay.textContent = currentGuard.name;
+            guardRoleDisplay.textContent = currentGuard.role;
+            guardIdDisplay.textContent = currentGuard.id;
+            guardNameEl.textContent = currentGuard.name;
+            guardRoleEl.textContent = currentGuard.role;
+            
+            // Switch screens
+            loginScreen.classList.add('hidden');
+            appScreen.classList.remove('hidden');
             
             // Start location tracking
             startLocationTracking();
-            
-            // Show app
-            loading.classList.add('hidden');
-            app.classList.remove('hidden');
         }
         
-        async function loadGuardProfile() {
-            try {
-                const response = await fetch(`${SERVER_URL}/api/location/${GUARD_ID}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.success && data.location) {
-                        updateGuardInfo(data.location);
-                    }
-                }
-            } catch (error) {
-                console.error('Error loading profile:', error);
-            }
-        }
-        
-        function updateGuardInfo(guardData) {
-            guardNameEl.textContent = guardData.name || 'Unknown';
-            guardSiteEl.textContent = guardData.site || 'On Duty';
-            batteryLevelEl.textContent = guardData.battery || '--';
-            
-            // Update battery icon color
-            const battery = guardData.battery || 100;
-            if (battery > 70) {
-                batteryIconEl.className = 'battery-high';
-            } else if (battery > 30) {
-                batteryIconEl.className = 'battery-medium';
-            } else {
-                batteryIconEl.className = 'battery-low';
-            }
-            
-            gpsAccuracyEl.textContent = guardData.accuracy ? `${guardData.accuracy}m` : 'Unknown';
-            
-            if (guardData.latitude && guardData.longitude) {
-                latitudeEl.textContent = guardData.latitude.toFixed(6);
-                longitudeEl.textContent = guardData.longitude.toFixed(6);
-                currentLocation = {
-                    lat: guardData.latitude,
-                    lng: guardData.longitude
-                };
-            }
-            
-            if (guardData.lastUpdate) {
-                const time = new Date(guardData.lastUpdate);
-                lastUpdateTimeEl.textContent = time.toLocaleTimeString();
-            }
-        }
-        
+        // Start location tracking
         function startLocationTracking() {
-            // Immediate update
+            // Update immediately
             updateLocation();
             
-            // Set up interval
-            updateInterval = setInterval(updateLocation, UPDATE_INTERVAL);
+            // Set up interval for auto-updates
+            locationUpdateInterval = setInterval(updateLocation, UPDATE_INTERVAL);
             
             // Also update on button click
-            updateBtn.addEventListener('click', updateLocation);
+            document.getElementById('updateLocationBtn').addEventListener('click', updateLocation);
+            
+            // Setup SOS button
+            document.getElementById('sosBtn').addEventListener('click', sendSOS);
         }
         
+        // Update location function (same as before)
         async function updateLocation() {
             try {
                 // Get current location from browser
@@ -404,23 +624,32 @@
                 
                 // Prepare data
                 const locationData = {
-                    guardId: GUARD_ID,
-                    guardName: guardNameEl.textContent,
+                    guardId: currentGuard.id,
+                    guardName: currentGuard.name,
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
                     accuracy: Math.round(position.coords.accuracy),
                     battery: battery,
                     speed: position.coords.speed || 0,
                     heading: position.coords.heading || null,
-                    site: guardSiteEl.textContent
+                    site: currentGuard.role
                 };
                 
                 // Update UI
-                latitudeEl.textContent = position.coords.latitude.toFixed(6);
-                longitudeEl.textContent = position.coords.longitude.toFixed(6);
-                gpsAccuracyEl.textContent = `${Math.round(position.coords.accuracy)}m`;
-                batteryLevelEl.textContent = battery;
-                lastUpdateTimeEl.textContent = new Date().toLocaleTimeString();
+                document.getElementById('latitude').textContent = position.coords.latitude.toFixed(6);
+                document.getElementById('longitude').textContent = position.coords.longitude.toFixed(6);
+                document.getElementById('gpsAccuracy').textContent = `${Math.round(position.coords.accuracy)}m`;
+                document.getElementById('batteryLevel').textContent = battery;
+                document.getElementById('lastUpdateTime').textContent = new Date().toLocaleTimeString();
+                
+                // Update battery icon color
+                if (battery > 70) {
+                    document.getElementById('batteryIcon').className = 'battery-high';
+                } else if (battery > 30) {
+                    document.getElementById('batteryIcon').className = 'battery-medium';
+                } else {
+                    document.getElementById('batteryIcon').className = 'battery-low';
+                }
                 
                 // Send to server
                 const response = await fetch(`${SERVER_URL}/api/location`, {
@@ -434,18 +663,67 @@
                 const result = await response.json();
                 console.log('Location updated:', result);
                 
-                // Update current location
-                currentLocation = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
-                
             } catch (error) {
                 console.error('Error updating location:', error);
-                alert('Unable to get location. Please enable GPS.');
+                showNotification('Unable to get location. Please enable GPS.');
             }
         }
         
+        // Send SOS alert
+        async function sendSOS() {
+            if (!confirm('🚨 ARE YOU SURE? This will send an EMERGENCY ALERT to all supervisors!')) {
+                return;
+            }
+            
+            try {
+                // Get current location for SOS
+                const position = await getCurrentPosition();
+                
+                const sosData = {
+                    guardId: currentGuard.id,
+                    guardName: currentGuard.name,
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                };
+                
+                const response = await fetch(`${SERVER_URL}/api/sos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(sosData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Visual feedback
+                    const sosBtn = document.getElementById('sosBtn');
+                    sosBtn.innerHTML = '🚨 SOS SENT! HELP IS COMING!';
+                    sosBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)';
+                    
+                    // Vibrate phone if supported
+                    if (navigator.vibrate) {
+                        navigator.vibrate([500, 200, 500, 200, 500]);
+                    }
+                    
+                    // Show notification
+                    showNotification('SOS Alert Sent! Help is on the way.');
+                    
+                    // Reset button after 10 seconds
+                    setTimeout(() => {
+                        sosBtn.innerHTML = '🚨 SOS EMERGENCY';
+                        sosBtn.style.background = 'linear-gradient(135deg, #ff0000 0%, #cc0000 100%)';
+                    }, 10000);
+                }
+                
+            } catch (error) {
+                console.error('Error sending SOS:', error);
+                showNotification('Failed to send SOS. Please try again.');
+            }
+        }
+        
+        // Helper functions
         function getCurrentPosition() {
             return new Promise((resolve, reject) => {
                 if (!navigator.geolocation) {
@@ -473,72 +751,65 @@
             return 100; // Default
         }
         
-        // SOS Button
-        sosBtn.addEventListener('click', async function() {
-            if (!confirm('🚨 ARE YOU SURE? This will send an EMERGENCY ALERT to all security personnel!')) {
-                return;
-            }
-            
-            try {
-                // Get current location for SOS
-                const position = await getCurrentPosition();
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear saved data
+                localStorage.removeItem('foxeye_guard');
                 
-                const sosData = {
-                    guardId: GUARD_ID,
-                    guardName: guardNameEl.textContent,
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                };
-                
-                const response = await fetch(`${SERVER_URL}/api/sos`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(sosData)
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    // Visual feedback
-                    sosBtn.innerHTML = '🚨 SOS SENT! HELP IS COMING!';
-                    sosBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%)';
-                    
-                    // Vibrate phone if supported
-                    if (navigator.vibrate) {
-                        navigator.vibrate([500, 200, 500, 200, 500]);
-                    }
-                    
-                    // Reset button after 10 seconds
-                    setTimeout(() => {
-                        sosBtn.innerHTML = '🚨 SOS EMERGENCY';
-                        sosBtn.style.background = 'linear-gradient(135deg, #ff0000 0%, #cc0000 100%)';
-                    }, 10000);
+                // Stop location updates
+                if (locationUpdateInterval) {
+                    clearInterval(locationUpdateInterval);
                 }
                 
-            } catch (error) {
-                console.error('Error sending SOS:', error);
-                alert('Failed to send SOS. Please try again.');
+                // Show login screen
+                appScreen.classList.add('hidden');
+                loginScreen.classList.remove('hidden');
+                
+                // Clear inputs
+                guardIdInput.value = '';
+                pinInput.value = '';
+                
+                // Reset current guard
+                currentGuard = { id: null, name: null, role: null };
+                
+                showNotification('Logged out successfully');
+            }
+        }
+        
+        // Event listeners
+        loginBtn.addEventListener('click', handleLogin);
+        
+        // Allow Enter key to submit login
+        guardIdInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+        
+        pinInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+        
+        // Check for existing login on load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!checkExistingLogin()) {
+                // Focus on guard ID input
+                guardIdInput.focus();
             }
         });
         
-        // Install as PWA prompt
-        let deferredPrompt;
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            
-            // Show install button (optional)
-            setTimeout(() => {
-                if (confirm('Install Fox Eye Guard as an app for easier access?')) {
-                    deferredPrompt.prompt();
-                }
-            }, 3000);
-        });
-        
-        // Initialize app
-        init();
+        // Add CSS for animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
