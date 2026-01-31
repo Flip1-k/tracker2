@@ -1,23 +1,1278 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Fox Eye Live Tracking</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦊 Fox Eye Security | Command Center</title>
+    <!-- Leaflet CSS for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Chart.js for Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-dark: #1e429f;
+            --secondary: #7e3af2;
+            --success: #0e9f6e;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --dark: #1f2937;
+            --darker: #111827;
+            --light: #f9fafb;
+            --gray: #6b7280;
+            --gray-light: #e5e7eb;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--light);
+            overflow-x: hidden;
+        }
+        
+        /* Top Navigation */
+        .top-nav {
+            background: rgba(17, 24, 39, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .logo-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .logo-text h1 {
+            font-family: 'Poppins', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .logo-text p {
+            font-size: 12px;
+            color: var(--gray);
+            letter-spacing: 1px;
+        }
+        
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .time-display {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .alert-badge {
+            position: relative;
+            background: var(--danger);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+        
+        /* Main Layout */
+        .dashboard {
+            display: grid;
+            grid-template-columns: 280px 1fr 380px;
+            gap: 24px;
+            padding: 100px 24px 24px;
+            max-width: 1920px;
+            margin: 0 auto;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+            height: calc(100vh - 124px);
+            position: sticky;
+            top: 84px;
+        }
+        
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            color: var(--gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 10px 20px rgba(26, 86, 219, 0.3);
+        }
+        
+        .nav-icon {
+            width: 24px;
+            text-align: center;
+            font-size: 18px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: auto;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 14px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 8px 0;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .stat-online { color: var(--success); }
+        .stat-offline { color: var(--gray); }
+        .stat-sos { color: var(--danger); }
+        
+        /* Main Content - Map */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .map-container {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 600px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        #map {
+            height: 100%;
+            width: 100%;
+            border-radius: 20px;
+        }
+        
+        .map-overlay {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            gap: 12px;
+            z-index: 1000;
+        }
+        
+        .search-box {
+            flex: 1;
+            background: rgba(17, 24, 39, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 20px;
+            color: white;
+            font-size: 14px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .map-btn {
+            background: rgba(17, 24, 39, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .map-btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Analytics Section */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+        
+        .chart-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .chart-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .chart-container {
+            height: 200px;
+            position: relative;
+        }
+        
+        /* Right Panel */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        
+        .panel-card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 24px;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .panel-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+        
+        .badge {
+            background: var(--primary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        /* Guards List */
+        .guards-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+        
+        .guards-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .guards-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .guards-list::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 10px;
+        }
+        
+        .guard-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 4px solid var(--success);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .guard-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+        
+        .guard-card.sos {
+            border-left-color: var(--danger);
+            animation: glow 2s infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(220, 38, 38, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(220, 38, 38, 0.6); }
+        }
+        
+        .guard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .guard-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .guard-info .site {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        .guard-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .status-online { background: var(--success); box-shadow: 0 0 10px var(--success); }
+        .status-offline { background: var(--gray); }
+        .status-sos { background: var(--danger); animation: blink 1s infinite; }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .guard-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            font-size: 13px;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .detail-label {
+            color: var(--gray);
+        }
+        
+        .detail-value {
+            font-weight: 500;
+        }
+        
+        /* Recent Alerts */
+        .alerts-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .alert-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .alert-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        .alert-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        
+        .alert-sos { background: rgba(220, 38, 38, 0.2); color: var(--danger); }
+        .alert-warning { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .alert-info { background: rgba(26, 86, 219, 0.2); color: var(--primary); }
+        
+        .alert-content h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .alert-content p {
+            font-size: 12px;
+            color: var(--gray);
+        }
+        
+        /* Notification Panel */
+        .notification-panel {
+            position: fixed;
+            top: 100px;
+            right: 24px;
+            width: 350px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .notification {
+            background: rgba(31, 41, 55, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 20px;
+            border-left: 4px solid var(--danger);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+            transform: translateX(0);
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); }
+            to { transform: translateX(0); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .dashboard {
+                grid-template-columns: 250px 1fr;
+            }
+            .right-panel {
+                grid-column: 1 / -1;
+                flex-direction: row;
+            }
+            .panel-card {
+                flex: 1;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                position: static;
+                height: auto;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>🦊 Live Guard Tracking</h1>
-    <div id="guards"></div>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <div class="logo-text">
+                <h1>Fox Eye Security</h1>
+                <p>COMMAND CENTER</p>
+            </div>
+        </div>
+        
+        <div class="nav-controls">
+            <div class="time-display">
+                <i class="far fa-clock"></i>
+                <span id="currentTime">--:--:--</span>
+                | <span id="currentDate">-- --- ----</span>
+            </div>
+            <div class="alert-badge" id="sosAlertBadge" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="sosCount">0</span> SOS ALERTS
+            </div>
+            <button class="map-btn" onclick="refreshAllData()">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+        </div>
+    </nav>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel"></div>
+
+    <!-- Main Dashboard -->
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <div class="nav-icon"><i class="fas fa-map-marked-alt"></i></div>
+                    <span>Live Tracking</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-icon"><i class="fas fa-users"></i></div>
+                    <span>Guard Management</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-icon"><i class="fas fa-chart-line"></i></div>
+                    <span>Analytics</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-icon"><i class="fas fa-history"></i></div>
+                    <span>History & Reports</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-icon"><i class="fas fa-cog"></i></div>
+                    <span>System Settings</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <div class="nav-icon"><i class="fas fa-headset"></i></div>
+                    <span>Support</span>
+                </a>
+            </nav>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Guards</div>
+                    <div class="stat-value" id="totalGuards">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Online Now</div>
+                    <div class="stat-value stat-online" id="onlineGuards">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Offline</div>
+                    <div class="stat-value stat-offline" id="offlineGuards">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">SOS Active</div>
+                    <div class="stat-value stat-sos" id="activeSOS">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Map Container -->
+            <div class="map-container">
+                <div id="map"></div>
+                <div class="map-overlay">
+                    <input type="text" class="search-box" placeholder="Search guards or locations..." id="searchBox">
+                    <button class="map-btn" onclick="fitAllMarkers()">
+                        <i class="fas fa-crosshairs"></i> Fit All
+                    </button>
+                    <button class="map-btn" onclick="toggleHeatmap()">
+                        <i class="fas fa-fire"></i> Heatmap
+                    </button>
+                    <button class="map-btn" onclick="exportMap()">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+            </div>
+
+            <!-- Analytics -->
+            <div class="analytics-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Guard Activity (24h)</h3>
+                        <select id="chartRange" onchange="updateActivityChart()">
+                            <option value="24h">24 Hours</option>
+                            <option value="7d">7 Days</option>
+                            <option value="30d">30 Days</option>
+                        </select>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Patrol Coverage</h3>
+                        <span class="badge">Live</span>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="coverageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <!-- Active Guards -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h2><i class="fas fa-users"></i> Active Guards</h2>
+                    <span class="badge" id="activeGuardCount">0</span>
+                </div>
+                <div class="guards-list" id="guardsList">
+                    <!-- Guard cards will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Recent Alerts -->
+            <div class="panel-card">
+                <div class="panel-header">
+                    <h2><i class="fas fa-bell"></i> Recent Alerts</h2>
+                    <span class="badge" id="alertCount">0</span>
+                </div>
+                <div class="alerts-list" id="alertsList">
+                    <!-- Alerts will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Heatmap Plugin -->
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
     <script>
-        async function updateLocations() {
-            const response = await fetch('/api/locations');
-            const data = await response.json();
-            document.getElementById('guards').innerHTML = 
-                `<p>Active Guards: ${data.count}</p>` +
-                data.locations.map(g => 
-                    `<div>${g.name} - ${g.status} - ${g.latitude}, ${g.longitude}</div>`
-                ).join('');
+        // Configuration
+        const SERVER_URL = 'https://tracker2-6w8m.onrender.com';
+        const UPDATE_INTERVAL = 5000; // 5 seconds
+        const MAX_ALERTS = 10;
+        
+        // Global variables
+        let map;
+        let markers = {};
+        let heatmap;
+        let heatmapEnabled = false;
+        let updateInterval;
+        let activityChart;
+        let coverageChart;
+        let alerts = [];
+        
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initTime();
+            initMap();
+            initCharts();
+            loadAllData();
+            
+            // Start auto-refresh
+            updateInterval = setInterval(loadAllData, UPDATE_INTERVAL);
+            
+            // Search functionality
+            document.getElementById('searchBox').addEventListener('input', function(e) {
+                searchGuards(e.target.value);
+            });
+        });
+        
+        // Initialize real-time clock
+        function initTime() {
+            function updateTime() {
+                const now = new Date();
+                document.getElementById('currentTime').textContent = 
+                    now.toLocaleTimeString('en-US', {hour12: false});
+                document.getElementById('currentDate').textContent = 
+                    now.toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'});
+            }
+            updateTime();
+            setInterval(updateTime, 1000);
         }
-        setInterval(updateLocations, 5000);
-        updateLocations();
+        
+        // Initialize map
+        function initMap() {
+            map = L.map('map').setView([40.7128, -74.0060], 12);
+            
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '© OpenStreetMap contributors, © CARTO',
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+            
+            // Add custom marker styles
+            const style = document.createElement('style');
+            style.textContent = `
+                .guard-marker { background: none; border: none; }
+                .marker {
+                    width: 48px; height: 48px; border-radius: 50%;
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: 20px; color: white;
+                    position: relative;
+                    border: 3px solid white;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+                }
+                .marker::after {
+                    content: '';
+                    position: absolute;
+                    width: 100%; height: 100%;
+                    border-radius: 50%;
+                    animation: ripple 2s infinite;
+                }
+                .marker-online { background: linear-gradient(135deg, var(--success), #10b981); }
+                .marker-offline { background: linear-gradient(135deg, var(--gray), #6b7280); }
+                .marker-sos { 
+                    background: linear-gradient(135deg, var(--danger), #ef4444);
+                    animation: sosPulse 1s infinite;
+                }
+                @keyframes ripple {
+                    0% { transform: scale(1); opacity: 1; }
+                    100% { transform: scale(1.5); opacity: 0; }
+                }
+                @keyframes sosPulse {
+                    0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+                    50% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+                }
+                .leaflet-popup-content { 
+                    min-width: 250px; 
+                    font-family: 'Inter', sans-serif;
+                }
+                .popup-guard-name {
+                    font-size: 18px; font-weight: 600; margin-bottom: 5px;
+                }
+                .popup-guard-info {
+                    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+                    margin: 15px 0;
+                }
+                .popup-info-item {
+                    font-size: 13px;
+                }
+                .popup-info-label {
+                    color: var(--gray); display: block; font-size: 12px;
+                }
+                .popup-actions {
+                    display: flex; gap: 10px; margin-top: 15px;
+                }
+                .popup-btn {
+                    flex: 1; padding: 8px; border: none; border-radius: 8px;
+                    background: var(--primary); color: white; cursor: pointer;
+                    font-size: 12px; font-weight: 500;
+                }
+                .popup-btn.sos {
+                    background: var(--danger);
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        // Initialize charts
+        function initCharts() {
+            // Activity Chart
+            const activityCtx = document.getElementById('activityChart').getContext('2d');
+            activityChart = new Chart(activityCtx, {
+                type: 'line',
+                data: {
+                    labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:59'],
+                    datasets: [{
+                        label: 'Active Guards',
+                        data: [3, 2, 8, 12, 10, 6, 4],
+                        borderColor: '#7e3af2',
+                        backgroundColor: 'rgba(126, 58, 242, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: '#9ca3af' }
+                        },
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.1)' },
+                            ticks: { color: '#9ca3af' }
+                        }
+                    }
+                }
+            });
+            
+            // Coverage Chart
+            const coverageCtx = document.getElementById('coverageChart').getContext('2d');
+            coverageChart = new Chart(coverageCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Patrolled', 'Unpatrolled'],
+                    datasets: [{
+                        data: [75, 25],
+                        backgroundColor: ['#0e9f6e', 'rgba(255,255,255,0.1)'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '80%',
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+        
+        // Load all data from server
+        async function loadAllData() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/locations`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    updateDashboard(data);
+                    updateMap(data.locations);
+                    updateGuardList(data.locations);
+                    checkForAlerts(data.locations);
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+                showNotification('Connection error. Retrying...', 'warning');
+            }
+        }
+        
+        // Update dashboard statistics
+        function updateDashboard(data) {
+            const total = data.count;
+            const online = data.locations.filter(g => g.status === 'online').length;
+            const offline = total - online;
+            const sos = data.locations.filter(g => g.sos).length;
+            
+            document.getElementById('totalGuards').textContent = total;
+            document.getElementById('onlineGuards').textContent = online;
+            document.getElementById('offlineGuards').textContent = offline;
+            document.getElementById('activeSOS').textContent = sos;
+            document.getElementById('activeGuardCount').textContent = online;
+            
+            // Update SOS alert badge
+            const sosBadge = document.getElementById('sosAlertBadge');
+            const sosCount = document.getElementById('sosCount');
+            
+            if (sos > 0) {
+                sosBadge.style.display = 'block';
+                sosCount.textContent = sos;
+            } else {
+                sosBadge.style.display = 'none';
+            }
+            
+            // Update activity chart with real data
+            updateActivityChartData(online);
+        }
+        
+        // Update activity chart with new data
+        function updateActivityChartData(currentOnline) {
+            const chartData = activityChart.data.datasets[0].data;
+            chartData.push(currentOnline);
+            if (chartData.length > 7) chartData.shift();
+            activityChart.update('none');
+        }
+        
+        // Update map markers
+        function updateMap(guards) {
+            // Clear old markers
+            Object.values(markers).forEach(marker => marker.remove());
+            markers = {};
+            
+            const heatPoints = [];
+            
+            guards.forEach(guard => {
+                if (guard.latitude && guard.longitude) {
+                    // Create marker
+                    const markerClass = guard.sos ? 'marker-sos' : 
+                                      guard.status === 'online' ? 'marker-online' : 'marker-offline';
+                    const markerIcon = guard.sos ? '🚨' : '👮';
+                    
+                    const marker = L.marker([guard.latitude, guard.longitude], {
+                        icon: L.divIcon({
+                            className: 'guard-marker',
+                            html: `<div class="marker ${markerClass}">${markerIcon}</div>`,
+                            iconSize: [48, 48],
+                            iconAnchor: [24, 48]
+                        })
+                    }).addTo(map);
+                    
+                    // Add popup
+                    marker.bindPopup(createPopupHTML(guard));
+                    
+                    // Store marker
+                    markers[guard.id] = marker;
+                    
+                    // Add to heatmap points
+                    heatPoints.push([guard.latitude, guard.longitude, 0.5]);
+                }
+            });
+            
+            // Update heatmap
+            if (heatmapEnabled && heatPoints.length > 0) {
+                if (heatmap) {
+                    heatmap.setLatLngs(heatPoints);
+                } else {
+                    heatmap = L.heatLayer(heatPoints, {
+                        radius: 25,
+                        blur: 15,
+                        maxZoom: 17,
+                        gradient: {0.4: 'blue', 0.6: 'cyan', 0.7: 'lime', 0.8: 'yellow', 1.0: 'red'}
+                    }).addTo(map);
+                }
+            }
+        }
+        
+        // Create popup HTML for markers
+        function createPopupHTML(guard) {
+            return `
+                <div class="popup-content">
+                    <div class="popup-guard-name">${guard.name}</div>
+                    <div class="popup-guard-info">
+                        <div class="popup-info-item">
+                            <span class="popup-info-label">ID</span>
+                            ${guard.id}
+                        </div>
+                        <div class="popup-info-item">
+                            <span class="popup-info-label">Status</span>
+                            ${guard.sos ? '🚨 SOS' : guard.status === 'online' ? '🟢 Online' : '⚫ Offline'}
+                        </div>
+                        <div class="popup-info-item">
+                            <span class="popup-info-label">Battery</span>
+                            ${guard.battery || '--'}%
+                        </div>
+                        <div class="popup-info-item">
+                            <span class="popup-info-label">Accuracy</span>
+                            ${guard.accuracy || '--'}m
+                        </div>
+                    </div>
+                    <div class="popup-actions">
+                        <button class="popup-btn" onclick="centerOnGuard('${guard.id}')">
+                            <i class="fas fa-crosshairs"></i> Center
+                        </button>
+                        <button class="popup-btn sos" onclick="callGuard('${guard.id}')">
+                            <i class="fas fa-phone"></i> Call
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Update guard list in right panel
+        function updateGuardList(guards) {
+            const container = document.getElementById('guardsList');
+            container.innerHTML = '';
+            
+            // Sort: SOS first, then online, then offline
+            const sortedGuards = [...guards].sort((a, b) => {
+                if (a.sos && !b.sos) return -1;
+                if (!a.sos && b.sos) return 1;
+                if (a.status === 'online' && b.status !== 'online') return -1;
+                if (a.status !== 'online' && b.status === 'online') return 1;
+                return 0;
+            });
+            
+            sortedGuards.forEach(guard => {
+                const card = document.createElement('div');
+                card.className = `guard-card ${guard.sos ? 'sos' : ''}`;
+                card.onclick = () => centerOnGuard(guard.id);
+                
+                const statusClass = guard.sos ? 'status-sos' : 
+                                  guard.status === 'online' ? 'status-online' : 'status-offline';
+                const statusText = guard.sos ? 'SOS' : 
+                                 guard.status === 'online' ? 'Online' : 'Offline';
+                
+                card.innerHTML = `
+                    <div class="guard-header">
+                        <div class="guard-info">
+                            <h3>${guard.name}</h3>
+                            <div class="site">${guard.site || 'On Duty'}</div>
+                        </div>
+                        <div class="guard-status">
+                            <div class="status-dot ${statusClass}"></div>
+                            <span>${statusText}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="guard-details">
+                        <div class="detail-item">
+                            <span class="detail-label">ID:</span>
+                            <span class="detail-value">${guard.id}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Battery:</span>
+                            <span class="detail-value">${guard.battery || '--'}%</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Accuracy:</span>
+                            <span class="detail-value">${guard.accuracy || '--'}m</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Last Update:</span>
+                            <span class="detail-value">${formatTime(guard.lastUpdate)}</span>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // Check for new alerts
+        function checkForAlerts(guards) {
+            const newAlerts = [];
+            
+            guards.forEach(guard => {
+                if (guard.sos) {
+                    // Check if this SOS is new
+                    const existingAlert = alerts.find(a => a.guardId === guard.id && a.type === 'sos');
+                    if (!existingAlert) {
+                        newAlerts.push({
+                            id: guard.id + Date.now(),
+                            guardId: guard.id,
+                            guardName: guard.name,
+                            type: 'sos',
+                            message: `SOS ALERT: ${guard.name} needs immediate assistance!`,
+                            time: new Date().toISOString()
+                        });
+                        
+                        // Show notification
+                        showNotification(`🚨 ${guard.name} triggered SOS!`, 'sos');
+                        
+                        // Play alert sound (if enabled)
+                        playAlertSound();
+                    }
+                }
+            });
+            
+            // Add new alerts to list
+            alerts = [...newAlerts, ...alerts].slice(0, MAX_ALERTS);
+            updateAlertsList();
+        }
+        
+        // Update alerts list
+        function updateAlertsList() {
+            const container = document.getElementById('alertsList');
+            const countElement = document.getElementById('alertCount');
+            
+            container.innerHTML = '';
+            countElement.textContent = alerts.length;
+            
+            alerts.forEach(alert => {
+                const alertClass = alert.type === 'sos' ? 'alert-sos' : 
+                                 alert.type === 'warning' ? 'alert-warning' : 'alert-info';
+                const alertIcon = alert.type === 'sos' ? '🚨' : 
+                                alert.type === 'warning' ? '⚠️' : 'ℹ️';
+                
+                const item = document.createElement('div');
+                item.className = 'alert-item';
+                item.innerHTML = `
+                    <div class="alert-icon ${alertClass}">
+                        ${alertIcon}
+                    </div>
+                    <div class="alert-content">
+                        <h4>${alert.guardName || 'System'}</h4>
+                        <p>${alert.message}</p>
+                        <small>${formatTime(alert.time)}</small>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const panel = document.getElementById('notificationPanel');
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            let icon = 'ℹ️';
+            if (type === 'sos') icon = '🚨';
+            if (type === 'warning') icon = '⚠️';
+            
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div style="font-size: 24px;">${icon}</div>
+                    <div>
+                        <div style="font-weight: 600; margin-bottom: 4px;">${type.toUpperCase()} Alert</div>
+                        <div style="font-size: 14px; color: #9ca3af;">${message}</div>
+                    </div>
+                </div>
+            `;
+            
+            panel.insertBefore(notification, panel.firstChild);
+            
+            // Remove after 5 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+        
+        // Play alert sound
+        function playAlertSound() {
+            try {
+                const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-alarm-digital-clock-beep-989.mp3');
+                audio.volume = 0.3;
+                audio.play();
+            } catch (e) {
+                // Audio not supported
+            }
+        }
+        
+        // Helper functions
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins}m ago`;
+            
+            const diffHours = Math.floor(diffMins / 60);
+            if (diffHours < 24) return `${diffHours}h ago`;
+            
+            return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        }
+        
+        function centerOnGuard(guardId) {
+            const marker = markers[guardId];
+            if (marker) {
+                map.setView(marker.getLatLng(), 16);
+                marker.openPopup();
+            }
+        }
+        
+        function fitAllMarkers() {
+            const bounds = L.latLngBounds();
+            Object.values(markers).forEach(marker => {
+                bounds.extend(marker.getLatLng());
+            });
+            
+            if (bounds.isValid()) {
+                map.fitBounds(bounds.pad(0.1));
+            }
+        }
+        
+        function toggleHeatmap() {
+            heatmapEnabled = !heatmapEnabled;
+            if (heatmapEnabled) {
+                loadAllData(); // Will create heatmap
+                showNotification('Heatmap enabled', 'info');
+            } else {
+                if (heatmap) {
+                    map.removeLayer(heatmap);
+                    heatmap = null;
+                }
+                showNotification('Heatmap disabled', 'info');
+            }
+        }
+        
+        function searchGuards(query) {
+            query = query.toLowerCase();
+            Object.entries(markers).forEach(([id, marker]) => {
+                // In real app, you would check guard name/id
+                const guard = Object.values(markers).find(m => m === marker);
+                if (guard) {
+                    // Toggle marker based on search
+                    // Simplified for demo
+                }
+            });
+        }
+        
+        function exportMap() {
+            showNotification('Exporting map image...', 'info');
+            // In real app, use leaflet-image plugin
+        }
+        
+        function refreshAllData() {
+            showNotification('Refreshing data...', 'info');
+            loadAllData();
+        }
+        
+        function callGuard(guardId) {
+            showNotification(`Calling guard ${guardId}...`, 'info');
+            // In real app, integrate with phone system
+        }
+        
+        function updateActivityChart() {
+            const range = document.getElementById('chartRange').value;
+            showNotification(`Loading ${range} activity data...`, 'info');
+            // In real app, fetch historical data
+        }
     </script>
 </body>
 </html>
