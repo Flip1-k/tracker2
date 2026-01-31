@@ -1,27 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fox Eye - Admin Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; }
-        h1 { color: #333; }
-        .status { padding: 10px; background: #f0f0f0; border-radius: 5px; }
-        .online { color: green; }
-        .offline { color: red; }
-        .sos { color: red; font-weight: bold; }
-    </style>
+    <title>Fox Eye Live Tracking</title>
 </head>
 <body>
-    <div class="container">
-        <h1>🦊 Fox Eye Security - Admin Dashboard</h1>
-        <p>Server is running! Add your admin interface here.</p>
-        <div class="status">
-            <p>✅ API Status: <a href="/health" target="_blank">Check Health</a></p>
-            <p>📍 Guard Locations: <a href="/api/locations" target="_blank">View All</a></p>
-        </div>
-    </div>
+    <h1>🦊 Live Guard Tracking</h1>
+    <div id="guards"></div>
+    <script>
+        async function updateLocations() {
+            const response = await fetch('/api/locations');
+            const data = await response.json();
+            document.getElementById('guards').innerHTML = 
+                `<p>Active Guards: ${data.count}</p>` +
+                data.locations.map(g => 
+                    `<div>${g.name} - ${g.status} - ${g.latitude}, ${g.longitude}</div>`
+                ).join('');
+        }
+        setInterval(updateLocations, 5000);
+        updateLocations();
+    </script>
 </body>
 </html>
