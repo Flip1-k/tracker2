@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fox Eye - Admin Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #333; }
+        .status { padding: 10px; background: #f0f0f0; border-radius: 5px; }
+        .online { color: green; }
+        .offline { color: red; }
+        .sos { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🦊 Fox Eye Security - Admin Dashboard</h1>
+        <p>Server is running! Add your admin interface here.</p>
+        <div class="status">
+            <p>✅ API Status: <a href="/health" target="_blank">Check Health</a></p>
+            <p>📍 Guard Locations: <a href="/api/locations" target="_blank">View All</a></p>
+        </div>
+    </div>
+</body>
+</html>
