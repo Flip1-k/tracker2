@@ -76,7 +76,8 @@ const guardDatabase = {
     "EMP050": { name: "Oluwa Tobi", pin: "1050", role: "Day Guard", status: "Active" },
     "EMP051": { name: "Muhammed Gassama", pin: "1051", role: "Night Guard", status: "Active" },
     "EMP052": { name: "Sanusi Jobe", pin: "1052", role: "Night Guard", status: "Active" },
-    "EMP053": { name: "Muhammed Kamara", pin: "1053", role: "Night Guard", status: "Active" }
+    "EMP053": { name: "Muhammed Kamara", pin: "1053", role: "Night Guard", status: "Active" },
+     "EMP054": { name: "Nolimit", pin: "1054", role: "Night Guard", status: "Active" }
 };
 
 
